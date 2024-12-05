@@ -10,17 +10,9 @@ class HybridSecretManager(CloudSecretManagerBackend):
     """
     def __init__(
         self,
-        project_id: str = "democentral",
-        connections_prefix: str = "airflow-connections",
-        variables_prefix: str = "airflow-variables",
-        sep: str = "-",
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.connections_prefix = connections_prefix
-        self.variables_prefix = variables_prefix
-        self.sep = sep
-        self.project_id = project_id
         self.metastore_backend = MetastoreBackend()
 
     def get_variable(self, key: str) -> Optional[str]:
