@@ -52,8 +52,8 @@ gcloud config set artifacts/location northamerica-northeast1
 ####  Update `pip.conf` with your Python Package Repository and configure your composer environment to install from it. When using Artifact Registry repository, /simple/ should be appended to the repository URL
 ####  Upload this `pip.conf` file to the `/config/pip/` folder in your composer environment's bucket.
 
-### Step 6: Prepare the Package
-####  Ensure your `setup.py` file is correctly configured for your project.
+### Step 6: Review the Package
+####  Ensure your `setup.py` file is correctly configured for your project and run the following command to package your Python project for distribution
 ```
 python setup.py sdist bdist_wheel
 ```
@@ -71,6 +71,8 @@ python3 -m twine upload --repository-url [https://northamerica-northeast1-python
 Package name: `hybrid-secret-manager`
 Version: `==0.0.1`
 ```
+
+Note: If you need to make changes to the `HybridSecretManager` code, update the version each time in `setup.py`, re-run step 6 to package the new distribution and re-upload the package to Artifact Registry (using step 7). Once you do that, update the version to new version in Cloud Composer PYPI Packages tab to install the update. 
 
 ### Step 9: Update Airflow Configuration
 #### Use airflow configuration overrides to set the custom secret backend:
