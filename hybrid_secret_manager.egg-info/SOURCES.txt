@@ -1,0 +1,9 @@
+README.md
+setup.py
+hybrid_secret_manager/__init__.py
+hybrid_secret_manager/secrets_backend.py
+hybrid_secret_manager.egg-info/PKG-INFO
+hybrid_secret_manager.egg-info/SOURCES.txt
+hybrid_secret_manager.egg-info/dependency_links.txt
+hybrid_secret_manager.egg-info/requires.txt
+hybrid_secret_manager.egg-info/top_level.txt
