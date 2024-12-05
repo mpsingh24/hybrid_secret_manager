@@ -2,9 +2,9 @@
 
 This repository contains a custom Secret Manager backend for Google Cloud Composer. It reverses the default Airflow order of first checking external Secret Manager and then Airflow DB for secrets. The backend first checks the Airflow database for variables and connections. If a secret is not found in the Airflow database, it falls back to Google Cloud Secret Manager.
 
-```
-Note: I am using a project name democentral and Artifact Registry named pypi. Please remember to update these with your project name and Artifact Registry name as you go through the steps.
-```
+
+Note: This example uses project named democentral and Artifact Registry named pypi. Please remember to update these with your project name and Artifact Registry name as you go through the steps.
+
 
 ## Prerequisites
 
