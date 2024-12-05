@@ -14,19 +14,25 @@ Follow these steps to set up and deploy the `HybridSecretManager`.
 
 
 ### Step 1: Create a Python Virtual Environment
+```
 python3 -m venv .venv
 source .venv/bin/activate
+```
 
 ### Step 2: Install Required Dependencies
+```
 pip install apache-airflow[gcp]
 pip install setuptools
+```
 
 ### Step 3: Create Google Artifact Registry for Python Packages
 #### Replace "pypi" with the name of your desired registry.
+```
 gcloud artifacts repositories create pypi \
     --repository-format=python \
     --location=northamerica-northeast1 \
     --description="Python package repository"
+```
 
 ### Step 4: Configure Google Artifact Registry
 #### Replace "pypi" with your registry name.
