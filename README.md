@@ -2,6 +2,10 @@
 
 This repository contains a custom Secret Manager backend for Google Cloud Composer. It reverses the default Airflow order of first checking external Secret Manager and then Airflow DB for secrets. The backend first checks the Airflow database for variables and connections. If a secret is not found in the Airflow database, it falls back to Google Cloud Secret Manager.
 
+```
+Note: I am using a project name democentral and Artifact Registry named pypi. Please remember to update these with your project name and Artifact Registry name as you go through the steps.
+```
+
 ## Prerequisites
 
 - Python 3.x installed on your machine.
@@ -22,7 +26,10 @@ source .venv/bin/activate
 ### Step 2: Install Required Dependencies
 ```
 pip install apache-airflow[gcp]
+pip install wheel
+pip install twine
 pip install setuptools
+pip install keyrings.google-artifactregistry-auth
 ```
 
 ### Step 3: Create Google Artifact Registry for Python Packages
@@ -41,8 +48,8 @@ gcloud config set artifacts/repository pypi
 gcloud config set artifacts/location northamerica-northeast1
 ```
 
-### Step 5: Update pip.conf
-####  Update `pip.conf` with your Python Package Repository and configure your composer environment to install from it. 
+### Step 5: Review the pip.conf file
+####  Update `pip.conf` with your Python Package Repository and configure your composer environment to install from it. When using Artifact Registry repository, /simple/ should be appended to the repository URL
 ####  Upload this `pip.conf` file to the `/config/pip/` folder in your composer environment's bucket.
 
 ### Step 6: Prepare the Package
@@ -62,7 +69,7 @@ python3 -m twine upload --repository-url [https://northamerica-northeast1-python
 #### Provide the following:
 ```
 Package name: `hybrid-secret-manager`
-Version: `==0.2.4`
+Version: `==0.0.1`
 ```
 
 ### Step 9: Update Airflow Configuration
