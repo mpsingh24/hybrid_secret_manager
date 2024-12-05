@@ -1,4 +1,4 @@
 .venv/
 build/
 dist/
-hybrid_secret_manager.egg-infoid/
+hybrid_secret_manager.egg-info/

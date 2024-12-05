@@ -1,6 +1,6 @@
 # Custom HybridSecretManager for Cloud Composer
 
-This repository contains a custom Secret Manager backend for Google Cloud Composer. The backend first checks the Airflow database for variables and connections. If a secret is not found in the Airflow database, it falls back to Google Cloud Secret Manager.
+This repository contains a custom Secret Manager backend for Google Cloud Composer. It reverses the default Airflow order of first checking external Secret Manager and then Airflow DB for secrets. The backend first checks the Airflow database for variables and connections. If a secret is not found in the Airflow database, it falls back to Google Cloud Secret Manager.
 
 ## Prerequisites
 
@@ -12,39 +12,60 @@ This repository contains a custom Secret Manager backend for Google Cloud Compos
 
 Follow these steps to set up and deploy the `HybridSecretManager`.
 
-```bash
-# Step 1: Create a Python Virtual Environment
+
+### Step 1: Create a Python Virtual Environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Step 2: Install Required Dependencies
+### Step 2: Install Required Dependencies
 pip install apache-airflow[gcp]
 pip install setuptools
 
-# Step 3: Configure Google Artifact Registry (replace pypi with your registry name)
+### Step 3: Create Google Artifact Registry for Python Packages
+#### Replace "pypi" with the name of your desired registry.
+gcloud artifacts repositories create pypi \
+    --repository-format=python \
+    --location=northamerica-northeast1 \
+    --description="Python package repository"
+
+### Step 4: Configure Google Artifact Registry
+#### Replace "pypi" with your registry name.
+```
 gcloud config set artifacts/repository pypi
 gcloud config set artifacts/location northamerica-northeast1
+```
 
-# Step 4: Prepare the Package
+### Step 5: Update pip.conf
+####  Update `pip.conf` with your Python Package Repository and configure your composer environment to install from it. 
+####  Upload this `pip.conf` file to the `/config/pip/` folder in your composer environment's bucket.
+
+### Step 6: Prepare the Package
+####  Ensure your `setup.py` file is correctly configured for your project.
+```
 python setup.py sdist bdist_wheel
+```
 
-# Step 5: Upload the Package to Google Artifact Registry
-# Replace `democentral` with your GCP project ID.
-python3 -m twine upload --repository-url https://northamerica-northeast1-python.pkg.dev/democentral/pypi/ dist/*
+### Step 7: Upload the Package to Google Artifact Registry
+#### Replace "democentral" with your GCP project ID.
+```
+python3 -m twine upload --repository-url [https://northamerica-northeast1-python.pkg.dev/democentral/pypi/](https://northamerica-northeast1-python.pkg.dev/democentral/pypi/) dist/*
+```
 
-# Step 6: Deploy the Package to Cloud Composer
-# Add the package to your Cloud Composer environment via the Airflow web server or using the GCP Console.
-# Ensure the environment variables or necessary configurations for the Secret Manager are set.
+### Step 8: Deploy the Package to Cloud Composer
+#### Add the package to your Cloud Composer environment via PYPI Packages tab.
+#### Provide the following:
+```
+Package name: `hybrid-secret-manager`
+Version: `==0.2.4`
+```
 
-# Step 7: Update Airflow Configuration
-# Update the `airflow.cfg` file or use environment variables to set the custom secret backend:
-# [secrets]
-# backend = your_project.HybridSecretManager
-# backend_kwargs = {"key_path": "path/to/credentials.json"}
+### Step 9: Update Airflow Configuration
+#### Use airflow configuration overrides to set the custom secret backend:
+```
+[secrets]
+backend = hybrid_secret_manager.HybridSecretManager
+backend_kwargs = {"project_id": "democentral", "connections_prefix":"airflow-connections", "variables_prefix":"airflow-variables", "sep":"-"}
+```
 
-# Step 8: Test the Custom Secret Manager
-# Deploy an Airflow DAG that retrieves secrets to validate the integration.
-
-# Additional Notes:
-# - Ensure the service account running Cloud Composer has the necessary permissions for Google Cloud Secret Manager.
-# - Verify the fallback behavior by storing some secrets in Airflow and others in Google Cloud Secret Manager.
+### Step 10: Test the Custom Secret Manager
+#### Deploy an Airflow DAG that retrieves secrets to validate the integration.

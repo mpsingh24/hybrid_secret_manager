@@ -1,6 +1,0 @@
-Metadata-Version: 2.1
-Name: hybrid-secret-manager
-Version: 0.2.4
-Summary: Custom Airflow secrets backend for Google Secret Manager
-Author: Your Name
-Author-email: your.email@example.com
